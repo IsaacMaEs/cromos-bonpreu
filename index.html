@@ -208,6 +208,30 @@ button.avatar{border:0;padding:0;font:inherit;font-weight:800}
 .pf-lab input,.pf-lab select{font:inherit;font-size:14px;color:var(--ink);padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;width:100%}
 .pf-edit{background:var(--green-soft);color:var(--green);font-weight:700;font-size:12.5px;padding:4px 12px;border-radius:99px}
 
+/* Targeta */
+.linkbtn{background:none;padding:0;color:var(--green);font-weight:700;font-size:12.5px;text-decoration:underline;text-underline-offset:2px}
+.bcard{display:block;width:100%;aspect-ratio:1.586;background:none;padding:0;perspective:1000px;margin:4px 0 8px}
+.bc-in{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.3,1.2,.5,1);transform-style:preserve-3d}
+.bcard.flip .bc-in{transform:rotateY(180deg)}
+.bc-face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:16px 18px;text-align:left;box-shadow:0 14px 30px -10px rgba(11,90,42,.55)}
+.bc-front{background:linear-gradient(135deg,#0b5a2a 0%,#13803d 55%,#3d9f3a 100%);color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.bc-front::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,210,0,.16);right:-70px;top:-90px}
+.bc-top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.bc-logo{font-size:22px;font-weight:800}
+.bc-logo i{font-style:normal;color:var(--yellow)}
+.bc-chip{width:40px;height:30px;border-radius:6px;background:linear-gradient(135deg,#ffe57a,#d9a800)}
+.bc-num{font-size:17px;letter-spacing:2px;font-weight:600}
+.bc-bot{display:flex;justify-content:space-between;font-size:12px;opacity:.9;text-transform:uppercase;letter-spacing:.5px}
+.bc-back{background:#fff;border:1px solid var(--line);transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;text-align:center}
+.bc-back small{color:var(--muted);font-size:12px}
+.bc-bar{width:100%}
+.bc-back b{letter-spacing:2px;font-size:14px}
+.bc-hint{text-align:center;color:var(--muted);font-size:12.5px;margin:0 0 12px}
+.bc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.bc-stats div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center}
+.bc-stats b{display:block;font-family:"Baloo 2";font-size:20px;color:var(--green)}
+.bc-stats small{color:var(--muted);font-size:11.5px}
+
 @media (max-width:1180px){
   .wrap{grid-template-columns:minmax(0,400px) minmax(0,400px)}
   .col-flow{grid-column:1 / -1;max-width:828px;width:100%;justify-self:center}
@@ -285,10 +309,12 @@ button.avatar{border:0;padding:0;font:inherit;font-weight:800}
       <section class="scr" id="s-share"></section>
       <section class="scr" id="s-prizes"></section>
       <section class="scr" id="s-profile"></section>
+      <section class="scr" id="s-card"></section>
 
       <nav class="tabbar">
         <button class="on" data-tab="album"><span>🃏</span>Àlbum</button>
         <button data-tab="prizes"><span>🎁</span>Premis</button>
+        <button data-tab="card"><span>💳</span>Targeta</button>
         <button data-tab="profile"><span>👤</span>Perfil</button>
       </nav>
       <div class="toast" id="toast"></div>
@@ -350,7 +376,8 @@ const KEY='bonpreu-cromos-v1';
 const fresh = () => ({pieces:Object.fromEntries(CROMOS.map(c=>[c.id,[0,0,0,0]])), saldo:0, first:true, mesos:0, unlocked:[], log:[], ident:'app'});
 let S; try{ S = JSON.parse(localStorage.getItem(KEY)) || fresh(); }catch(e){ S = fresh(); }
 S.ident='app';
-const PERFIL0 = {nom:'Marta Puig Soler', naix:'2001-03-14', email:'marta.puig@exemple.cat', super:0};
+const PERFIL0 = {nom:'Aina Vila Soler', naix:'2001-03-14', email:'aina.vila@exemple.cat', super:0};
+if(S.perfil && S.perfil.nom==='Marta Puig Soler'){ S.perfil.nom=PERFIL0.nom; S.perfil.email=PERFIL0.email; }
 S.perfil = Object.assign({}, PERFIL0, S.perfil||{});
 const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
 
@@ -491,7 +518,7 @@ function renderProfile(){
     <div class="apphead"><div class="logo">El meu perfil</div></div>
     <div class="pf-head">
       <div class="avatar big">${esc(P.nom.trim().charAt(0).toUpperCase()||'?')}</div>
-      <div><b>${esc(P.nom)}</b><small>Client ${A.nivell} · Targeta ···· 4821</small></div>
+      <div><b>${esc(P.nom)}</b><small>Client ${A.nivell} · <button class="linkbtn" data-tab="card">💳 Targeta ···· 4821 ›</button></small></div>
     </div>
 
     <div class="box">
@@ -534,6 +561,43 @@ function renderProfile(){
     <small style="display:block;text-align:center;color:var(--muted);margin-top:4px">Dades inventades per al prototip</small>`;
 }
 
+/* ---------- Targeta ---------- */
+let cardFlip=false;
+function barcode(){
+  // Codi de barres decoratiu i estable (no és un codi real)
+  let x=6, bars='';
+  for(let i=0;i<60;i++){ const w=1+((i*7+3)%4===0?2:(i*5)%3===0?1:0); if(i%2===0) bars+=`<rect x="${x}" y="0" width="${w}" height="70" fill="#111"/>`; x+=w+1.2; }
+  return `<svg viewBox="0 0 ${x+6} 70" width="100%" height="80" preserveAspectRatio="none" aria-label="Codi de barres">${bars}</svg>`;
+}
+function renderCard(){
+  const P=S.perfil, A=antiguitat(), total=CROMOS.reduce((a,c)=>a+count(c.id),0), premis=CROMOS.filter(c=>isDone(c.id)).length;
+  $('#s-card').innerHTML = `
+    <div class="apphead"><div class="logo">La meva targeta</div></div>
+    <button class="bcard ${cardFlip?'flip':''}" id="bcard" aria-label="Gira la targeta">
+      <div class="bc-in">
+        <div class="bc-face bc-front">
+          <div class="bc-top"><span class="baloo bc-logo">Bonpreu <i>●</i></span><span class="lvl lvl-${A.nivell}">${A.nivell}</span></div>
+          <div class="bc-chip"></div>
+          <div class="bc-num">2100 •••• •••• 4821</div>
+          <div class="bc-bot"><span>${esc(P.nom)}</span><span>Des de 2022</span></div>
+        </div>
+        <div class="bc-face bc-back">
+          <small>Ensenya aquest codi a la caixa o a Esclat</small>
+          <div class="bc-bar">${barcode()}</div>
+          <b>2100 5521 9073 4821</b>
+        </div>
+      </div>
+    </button>
+    <p class="bc-hint">${cardFlip?'Toca-la per tornar a la cara':'👆 Toca la targeta per veure el codi de barres'}</p>
+    <div class="bc-stats">
+      <div><b>${total}/24</b><small>peces</small></div>
+      <div><b>${premis}</b><small>${premis===1?'premi':'premis'}</small></div>
+      <div><b>${ratxa().streak}</b><small>mesos de ratxa</small></div>
+    </div>
+    <button class="btn wide" data-wallet>📲 Afegir a la cartera del mòbil</button>
+    <div class="box" style="margin-top:10px;font-size:12.5px;color:var(--muted)">Si pagues amb la targeta, les peces s'afegeixen soles a l'àlbum, igual que amb l'app.</div>`;
+}
+
 function show(name, id, anim){
   current=name;
   document.querySelectorAll('.scr').forEach(e=>e.classList.remove('on'));
@@ -543,8 +607,10 @@ function show(name, id, anim){
   if(name==='share'){ renderShare(id); setStep(5); }
   if(name==='prizes'){ renderPrizes(); }
   if(name==='profile'){ profEdit=false; profMonth=null; renderProfile(); }
+  if(name==='card'){ cardFlip=false; renderCard(); }
   const el = $('#s-'+name); el.classList.add('on'); el.scrollTop=0;
-  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name || (name!=='prizes'&&name!=='profile'&&b.dataset.tab==='album')));
+  const tabs=['prizes','profile','card'];
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name || (!tabs.includes(name)&&b.dataset.tab==='album')));
 }
 
 /* ---------- Flow highlight ---------- */
@@ -584,7 +650,7 @@ function act(servei){
   if(servei==='online') txt='Comanda a la botiga online';
   S.first=false;
   const got = n? give(servei,n) : [];
-  S.log.unshift(`${s.ic} ${txt} (amb ${via}) → ${got.length?`+${got.length} peça${got.length>1?'es':''}`:'cap peça'}${bonus?' · regal de benvinguda':''}`);
+  S.log.unshift(`${s.ic} ${txt} (amb ${via}) → ${got.length?`+${got.length} ${got.length>1?'peces':'peça'}`:'cap peça'}${bonus?' · regal de benvinguda':''}`);
   S.log=S.log.slice(0,30); save(); renderSim();
   setTimeout(()=>{ setStep(2); setTimeout(()=>notify(servei, got, n, bonus), 550); }, 450);
 }
@@ -598,7 +664,7 @@ function notify(servei, got, n, bonus){
   if(got.length){
     const ids=[...new Set(got.map(g=>g.id))], c=byId[ids[0]], done=ids.filter(isDone);
     body = `<div class="pcs">${got.slice(0,3).map(g=>`<img src="${img(g.id,g.i+1)}" alt="">`).join('')}</div>
-      <div><b>${done.length?'🏆 Cromo completat!':`+${got.length} peça${got.length>1?'es':''} nova${got.length>1?'es':''}!`}</b>
+      <div><b>${done.length?'🏆 Cromo completat!':`+${got.length} ${got.length>1?'peces noves':'peça nova'}!`}</b>
       <small>${ids.map(id=>`${byId[id].nom} <b style="display:inline">${count(id)}/4</b>`).join(' · ')}${bonus?'<br>🎁 Peça de benvinguda per la primera compra':''}</small></div>`;
     N.dataset.id = done[0]||ids[0]; N.dataset.done = done.length?'1':'';
   } else if(n===0){
@@ -633,7 +699,7 @@ function toast(t){ const e=$('#toast'); e.textContent=t; e.classList.add('show')
 function renderSim(){
   $('#amtv').textContent = $('#amount').value+' €';
   const amt=+$('#amount').value, tot=S.saldo+amt, n=Math.floor(tot/10);
-  $('#saldo').innerHTML = `Saldo acumulat: <b>${S.saldo} €</b> → amb aquesta compra: <b>${n||(S.first?'1 (benvinguda)':0)} peça${n>1?'es':''}</b>`;
+  $('#saldo').innerHTML = `Saldo acumulat: <b>${S.saldo} €</b> → amb aquesta compra: <b>${n||(S.first?'1 (benvinguda)':0)} ${n>1?'peces':'peça'}</b>`;
   $('#log').innerHTML = S.log.length? S.log.map(l=>`<div>${l}</div>`).join('') : '<div>Encara no hi ha cap acció.</div>';
   document.querySelectorAll('#idsel button').forEach(b=>b.classList.toggle('on', b.dataset.id===S.ident));
 }
@@ -645,6 +711,8 @@ document.addEventListener('click', e=>{
   const g=e.target.closest('[data-go]'); if(g){ if(g.dataset.go==='unlock') confetti(); show(g.dataset.go, g.dataset.id); return; }
   const t=e.target.closest('[data-tab]'); if(t){ show(t.dataset.tab); return; }
   const net=e.target.closest('[data-net]'); if(net){ toast(net.dataset.net==="l'enllaç"?'Enllaç copiat ✓':`Compartit a ${net.dataset.net} ✓ (simulació)`); return; }
+  if(e.target.closest('#bcard')){ cardFlip=!cardFlip; $('#bcard').classList.toggle('flip',cardFlip); $('.bc-hint').textContent = cardFlip?'Toca-la per tornar a la cara':'👆 Toca la targeta per veure el codi de barres'; return; }
+  if(e.target.closest('[data-wallet]')){ toast('Afegida a la cartera ✓ (simulació)'); return; }
   const mo=e.target.closest('[data-month]'); if(mo){ const i=+mo.dataset.month; profMonth = profMonth===i?null:i; renderProfile(); return; }
   if(e.target.closest('#pfEdit')){
     if(profEdit){

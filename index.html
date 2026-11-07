@@ -177,6 +177,37 @@ button{font:inherit;cursor:pointer;border:0}
 .prize b{display:block;font-size:13.5px}
 .prize small{color:var(--muted);font-size:12px}
 
+/* Perfil */
+button.avatar{border:0;padding:0;font:inherit;font-weight:800}
+.avatar.big{width:54px;height:54px;font-size:24px;font-family:"Baloo 2"}
+.pf-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.pf-head b{display:block;font-size:17px}
+.pf-head small{color:var(--muted);font-size:12.5px}
+.pf-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px!important}
+.pf-big{font-family:"Baloo 2";font-size:17px;color:var(--green);white-space:nowrap}
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:8px}
+.mo{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 0;display:grid;justify-items:center;font-size:11px;font-weight:600;color:var(--muted)}
+.mo span{font-size:16px;line-height:1.2}
+.mo.ok{background:var(--yellow-soft);border-color:var(--yellow);color:var(--green)}
+.mo.cur{border-style:dashed;border-color:var(--green2)}
+.mo.sel{box-shadow:0 0 0 2px var(--green2)}
+.pf-note{font-size:12.5px;background:var(--bg);border-radius:9px;padding:7px 9px}
+.pf-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:4px 0;border-bottom:1px solid var(--line)}
+.pf-row:last-child{border-bottom:0}
+.pf-row span{color:var(--muted)}
+.pf-row b{text-align:right;overflow-wrap:anywhere}
+.lvl{padding:1px 9px;border-radius:99px;font-size:12px}
+.lvl-Or{background:var(--yellow);color:var(--green)}
+.lvl-Plata{background:#dfe3e6}
+.lvl-Bronze{background:#f0d2b4}
+.pf-shop{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.pf-shop .pin{width:38px;height:38px;border-radius:10px;background:var(--green-soft);display:grid;place-items:center;font-size:18px}
+.pf-shop b{display:block}
+.pf-shop small{color:var(--muted);font-size:12.5px}
+.pf-lab{display:grid;gap:3px;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px}
+.pf-lab input,.pf-lab select{font:inherit;font-size:14px;color:var(--ink);padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;width:100%}
+.pf-edit{background:var(--green-soft);color:var(--green);font-weight:700;font-size:12.5px;padding:4px 12px;border-radius:99px}
+
 @media (max-width:1180px){
   .wrap{grid-template-columns:minmax(0,400px) minmax(0,400px)}
   .col-flow{grid-column:1 / -1;max-width:828px;width:100%;justify-self:center}
@@ -208,7 +239,6 @@ button{font:inherit;cursor:pointer;border:0}
       <p class="sub">Això és el que faria l'usuari al món real. El mòbil reacciona com ho faria l'app.</p>
       <div class="idsel" id="idsel">
         <button class="on" data-id="app">📱 Amb l'app</button>
-        <button data-id="targeta">💳 Amb la targeta</button>
       </div>
 
       <div class="svc">
@@ -254,11 +284,12 @@ button{font:inherit;cursor:pointer;border:0}
       <section class="scr" id="s-unlock"></section>
       <section class="scr" id="s-share"></section>
       <section class="scr" id="s-prizes"></section>
+      <section class="scr" id="s-profile"></section>
 
       <nav class="tabbar">
         <button class="on" data-tab="album"><span>🃏</span>Àlbum</button>
         <button data-tab="prizes"><span>🎁</span>Premis</button>
-        <button data-tab="card"><span>💳</span>Targeta</button>
+        <button data-tab="profile"><span>👤</span>Perfil</button>
       </nav>
       <div class="toast" id="toast"></div>
       <div class="confetti" id="confetti"></div>
@@ -317,6 +348,9 @@ const img = (id,i) => `cromos/${id}${i?'_'+i:''}.jpg`;
 const KEY='bonpreu-cromos-v1';
 const fresh = () => ({pieces:Object.fromEntries(CROMOS.map(c=>[c.id,[0,0,0,0]])), saldo:0, first:true, mesos:0, unlocked:[], log:[], ident:'app'});
 let S; try{ S = JSON.parse(localStorage.getItem(KEY)) || fresh(); }catch(e){ S = fresh(); }
+S.ident='app';
+const PERFIL0 = {nom:'Marta Puig Soler', naix:'2001-03-14', email:'marta.puig@exemple.cat', super:0};
+S.perfil = Object.assign({}, PERFIL0, S.perfil||{});
 const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
 
 const $ = s => document.querySelector(s);
@@ -335,7 +369,7 @@ function puzzle(c, opts={}){
 function renderAlbum(){
   const total = CROMOS.reduce((a,c)=>a+count(c.id),0), complets = CROMOS.filter(c=>isDone(c.id)).length;
   $('#s-album').innerHTML = `
-    <div class="apphead"><div class="logo">Bonpreu <i>●</i></div><div class="avatar">M</div></div>
+    <div class="apphead"><div class="logo">Bonpreu <i>●</i></div><button class="avatar" data-tab="profile" aria-label="Perfil">${S.perfil.nom.trim().charAt(0).toUpperCase()||'?'}</button></div>
     <div class="hero">
       <h3>El teu àlbum de tardor</h3>
       <div class="bar"><i style="width:${total/24*100}%"></i></div>
@@ -418,12 +452,85 @@ function renderPrizes(){
     <div class="box" style="margin-top:8px"><h4>Pròxims premis</h4>${CROMOS.filter(c=>!isDone(c.id)).map(c=>`<div style="font-size:12.5px;padding:2px 0">🔒 ${c.premi.t} ${c.premi.d} <span style="color:var(--muted)">(${count(c.id)}/4)</span></div>`).join('')||'Ho tens tot! 🏆'}</div>`;
 }
 
-function renderCard(){
-  $('#s-prizes').innerHTML = `<div class="apphead"><div class="logo">Targeta Bonpreu</div></div>
-    <div class="hero" style="padding:20px"><div class="baloo" style="font-size:20px">Bonpreu <span style="color:var(--yellow)">●</span></div>
-      <div style="background:#fff;border-radius:10px;padding:12px;margin:14px 0 8px;display:grid;place-items:center">
-      <svg viewBox="0 0 200 60" width="100%" height="60" aria-label="Codi de barres">${Array.from({length:46},(_,i)=>`<rect x="${4+i*4.2}" y="0" width="${(i*7%3)+1}" height="60" fill="#111"/>`).join('')}</svg></div>
-      <small>Ensenya-la a la caixa, a Esclat o vincula-la a la compra online. Les peces arriben soles.</small></div>`;
+/* ---------- Perfil ---------- */
+const SUPERS = [
+  {m:'Vic',        c:'Rambla del Passeig, 24'},
+  {m:'Manlleu',    c:'Passeig del Ter, 7'},
+  {m:'Granollers', c:'Carrer de Girona, 112'},
+  {m:'Girona',     c:'Carrer de Santa Eugènia, 45'},
+  {m:'Barcelona',  c:'Carrer de Pujades, 160'},
+];
+const ALTA = new Date(2022, 2, 15); // client des del 15/03/2022
+const MESOS = ['gen','febr','març','abr','maig','juny','jul','ag','set','oct','nov','des'];
+// Historial inventat dels 5 mesos anteriors (1 = va guanyar un premi aquell mes)
+const HIST = [{ok:1,p:'-20% lot esmorzar'},{ok:0,p:''},{ok:1,p:'5 cèntims/litre a Esclat'},{ok:1,p:'-25% lot fruita de proximitat'},{ok:1,p:'10 € a la factura de llum'}];
+let profEdit=false, profMonth=null;
+
+function ratxa(){
+  const now=new Date(), arr=[];
+  HIST.forEach((h,k)=>{ const d=new Date(now.getFullYear(), now.getMonth()-(HIST.length-k), 1); arr.push({...h, d}); });
+  const doneNow = CROMOS.filter(c=>isDone(c.id));
+  arr.push({ok:doneNow.length?1:0, p:doneNow.map(c=>c.premi.t+' '+c.premi.d).join(' · '), d:new Date(now.getFullYear(), now.getMonth(),1), cur:true});
+  let streak=0; for(let i=arr.length-1;i>=0;i--){ if(arr[i].ok) streak++; else if(!arr[i].cur) break; }
+  return {arr, streak, curOk:!!arr[arr.length-1].ok};
+}
+function antiguitat(){
+  const n=new Date(); let m=(n.getFullYear()-ALTA.getFullYear())*12+(n.getMonth()-ALTA.getMonth()); if(n.getDate()<ALTA.getDate()) m--;
+  const y=Math.floor(m/12), r=m%12;
+  return {txt:`${y} any${y!==1?'s':''}${r?` i ${r} mes${r!==1?'os':''}`:''}`, y, nivell: y>=4?'Or':y>=2?'Plata':'Bronze', pct:Math.round(r/12*100)};
+}
+const edat = iso => { const b=new Date(iso), n=new Date(); let a=n.getFullYear()-b.getFullYear(); if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate())) a--; return a; };
+const fmtData = iso => { const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; };
+const esc = s => String(s).replace(/[&<>"]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+
+function renderProfile(){
+  const P=S.perfil, R=ratxa(), A=antiguitat(), sup=SUPERS[P.super]||SUPERS[0];
+  const sel = profMonth!==null ? R.arr[profMonth] : null;
+  $('#s-profile').innerHTML = `
+    <div class="apphead"><div class="logo">El meu perfil</div></div>
+    <div class="pf-head">
+      <div class="avatar big">${esc(P.nom.trim().charAt(0).toUpperCase()||'?')}</div>
+      <div><b>${esc(P.nom)}</b><small>Client ${A.nivell} · Targeta ···· 4821</small></div>
+    </div>
+
+    <div class="box">
+      <h4 class="pf-h">🔥 Ratxa mensual de premis <span class="pf-big">${R.streak} ${R.streak===1?'mes':'mesos'}</span></h4>
+      <div class="months">${R.arr.map((m,i)=>`<button class="mo ${m.ok?'ok':''} ${m.cur?'cur':''} ${profMonth===i?'sel':''}" data-month="${i}">
+          <span>${m.ok?'🏆':m.cur?'⏳':'·'}</span>${MESOS[m.d.getMonth()]}</button>`).join('')}</div>
+      <div class="pf-note">${sel
+        ? (sel.ok ? `<b>${MESOS[sel.d.getMonth()]} ${sel.d.getFullYear()}:</b> ${esc(sel.p)}` : sel.cur ? `<b>Aquest mes:</b> encara cap premi. Completa un cromo per sumar a la ratxa.` : `<b>${MESOS[sel.d.getMonth()]} ${sel.d.getFullYear()}:</b> cap premi aquell mes, la ratxa es va reiniciar.`)
+        : (R.curOk ? `Aquest mes ja has guanyat un premi! Amb 3 mesos seguits o més, tens una <b>peça extra</b> cada mes.` : `Completa un cromo aquest mes per arribar a <b>${R.streak+1} mesos</b> seguits. Toca un mes per veure'n el premi.`)}</div>
+    </div>
+
+    <div class="box">
+      <h4 class="pf-h">📅 Antiguitat del compte <span class="pf-big">${A.txt}</span></h4>
+      <div class="pf-row"><span>Client des del</span><b>15/03/2022</b></div>
+      <div class="pf-row"><span>Nivell</span><b class="lvl lvl-${A.nivell}">${A.nivell}</b></div>
+      <div class="prog" style="margin:8px 0 2px"><div class="bar"><i style="width:${A.pct}%"></i></div><small style="white-space:nowrap">${A.pct}%</small></div>
+      <small style="color:var(--muted)">El 15 de març fas ${A.y+1} anys amb Bonpreu: et regalem una peça sorpresa.</small>
+    </div>
+
+    <div class="box">
+      <h4 class="pf-h">🏪 Supermercat de confiança</h4>
+      <div class="pf-shop"><div class="pin">📍</div><div><b>Bonpreu ${esc(sup.m)}</b><small>${esc(sup.c)}, ${esc(sup.m)}</small></div></div>
+      <label class="pf-lab">Canvia'l
+        <select id="pfSuper">${SUPERS.map((s,i)=>`<option value="${i}" ${i===P.super?'selected':''}>${s.m} · ${s.c}</option>`).join('')}</select>
+      </label>
+      <small style="color:var(--muted)">Les ofertes i els lots estalvi es preparen amb l'estoc d'aquesta botiga.</small>
+    </div>
+
+    <div class="box">
+      <h4 class="pf-h">👤 Dades personals <button class="pf-edit" id="pfEdit">${profEdit?'Desar':'Editar'}</button></h4>
+      ${profEdit ? `
+        <label class="pf-lab">Nom i cognoms<input id="pfNom" value="${esc(P.nom)}"></label>
+        <label class="pf-lab">Data de naixement<input id="pfNaix" type="date" value="${esc(P.naix)}"></label>
+        <label class="pf-lab">Correu electrònic<input id="pfEmail" type="email" value="${esc(P.email)}"></label>`
+      : `
+        <div class="pf-row"><span>Nom i cognoms</span><b>${esc(P.nom)}</b></div>
+        <div class="pf-row"><span>Data de naixement</span><b>${fmtData(P.naix)} (${edat(P.naix)} anys)</b></div>
+        <div class="pf-row"><span>Correu electrònic</span><b>${esc(P.email)}</b></div>`}
+    </div>
+    <small style="display:block;text-align:center;color:var(--muted);margin-top:4px">Dades inventades per al prototip</small>`;
 }
 
 function show(name, id, anim){
@@ -434,9 +541,9 @@ function show(name, id, anim){
   if(name==='unlock'){ renderUnlock(id); setStep(4); }
   if(name==='share'){ renderShare(id); setStep(5); }
   if(name==='prizes'){ renderPrizes(); }
-  if(name==='card'){ renderCard(); }
-  const el = $('#s-'+(name==='card'?'prizes':name)); el.classList.add('on'); el.scrollTop=0;
-  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name || (name!=='prizes'&&name!=='card'&&b.dataset.tab==='album')));
+  if(name==='profile'){ profEdit=false; profMonth=null; renderProfile(); }
+  const el = $('#s-'+name); el.classList.add('on'); el.scrollTop=0;
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name || (name!=='prizes'&&name!=='profile'&&b.dataset.tab==='album')));
 }
 
 /* ---------- Flow highlight ---------- */
@@ -536,10 +643,21 @@ document.addEventListener('click', e=>{
   const g=e.target.closest('[data-go]'); if(g){ if(g.dataset.go==='unlock') confetti(); show(g.dataset.go, g.dataset.id); return; }
   const t=e.target.closest('[data-tab]'); if(t){ show(t.dataset.tab); return; }
   const net=e.target.closest('[data-net]'); if(net){ toast(net.dataset.net==="l'enllaç"?'Enllaç copiat ✓':`Compartit a ${net.dataset.net} ✓ (simulació)`); return; }
-  const id=e.target.closest('#idsel button'); if(id){ S.ident=id.dataset.id; save(); renderSim(); }
+  const mo=e.target.closest('[data-month]'); if(mo){ const i=+mo.dataset.month; profMonth = profMonth===i?null:i; renderProfile(); return; }
+  if(e.target.closest('#pfEdit')){
+    if(profEdit){
+      const nom=$('#pfNom').value.trim(), naix=$('#pfNaix').value, email=$('#pfEmail').value.trim();
+      if(nom) S.perfil.nom=nom; if(naix) S.perfil.naix=naix; if(email) S.perfil.email=email;
+      save(); toast('Dades desades ✓');
+    }
+    profEdit=!profEdit; renderProfile(); return;
+  }
+});
+document.addEventListener('change', e=>{
+  if(e.target.id==='pfSuper'){ S.perfil.super=+e.target.value; save(); renderProfile(); toast('Supermercat de confiança actualitzat ✓'); }
 });
 $('#amount').addEventListener('input', renderSim);
-$('#reset').addEventListener('click', ()=>{ S=fresh(); save(); renderSim(); setStep(0); show('album'); $('#notif').classList.remove('show'); });
+$('#reset').addEventListener('click', ()=>{ S=fresh(); S.perfil={...PERFIL0}; save(); renderSim(); setStep(0); show('album'); $('#notif').classList.remove('show'); });
 $('#demoFill').addEventListener('click', ()=>{
   // Deixa cada cromo a 2–3 peces perquè la demo arribi ràpid al cromo complet
   CROMOS.forEach((c,k)=>{ S.pieces[c.id] = k%2? [1,1,1,0] : [1,0,1,0]; });

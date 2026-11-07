@@ -372,7 +372,7 @@ const CROMOS = [
    premi:{t:'-25%', d:'Kit DIY Crema de Cacauet Casolana', x:'Cacauets Frit Ravich, mel i pots de vidre per fer la teva crema de cacauet. Ideal per a bowls i torrades'}},
 ];
 const byId = Object.fromEntries(CROMOS.map(c=>[c.id,c]));
-const img = (id,i) => `cromos/${id}${i?'_'+i:''}.jpg`;
+const img = (id,i) => `cromos/${id}${i?'_'+i:''}.jpg?v=3`;
 
 const KEY='bonpreu-cromos-v2';
 const fresh = () => ({pieces:Object.fromEntries(CROMOS.map(c=>[c.id,[0,0,0,0]])), saldo:0, saldoEsclat:0, first:true, mesos:0, unlocked:[], log:[], ident:'app'});

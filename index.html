@@ -497,7 +497,6 @@ function renderAlbum(){
       <div class="bar"><i style="width:${total/24*100}%"></i></div>
       <small><b>${total}/24 peces</b> · ${complets} de 6 cromos complets</small>
     </div>
-    ${megaCard()}
     <div class="rules">
       <h4><span>Com aconsegueixes peces</span><span style="color:var(--muted);font-weight:500">Sense repetides</span></h4>
       ${Object.values(SERVEIS).map(s=>`<div class="r"><span class="dot" style="background:${s.color}">${s.ic}</span><span><b>${s.nom}:</b> ${s.regla}</span></div>`).join('')}
@@ -602,7 +601,7 @@ function megaCard(){
 function renderMega(){
   const n=CROMOS.filter(c=>isDone(c.id)).length, ok=allDone();
   $('#s-mega').innerHTML = `
-    <button class="back" data-go="album">‹ Àlbum</button>
+    <button class="back" data-tab="prizes">‹ Premis</button>
     <div class="mega-hero ${ok?'ok':''}">
       <div class="mega-trophy">${ok?'🏆':'🔒'}</div>
       <h3>${ok?'Àlbum complet!':'Recompensa especial'}</h3>
@@ -756,8 +755,8 @@ function show(name, id, anim){
   if(name==='card'){ cardFlip=false; renderCard(); }
   if(name==='mega'){ renderMega(); if(allDone()) confetti(); }
   const el = $('#s-'+name); el.classList.add('on'); el.scrollTop=0;
-  const tabs=['prizes','profile','card'];
-  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name || (!tabs.includes(name)&&b.dataset.tab==='album')));
+  const tabs=['prizes','profile','card','mega'], cur = name==='mega'?'prizes':name;
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===cur || (!tabs.includes(name)&&b.dataset.tab==='album')));
 }
 
 /* ---------- Flow highlight ---------- */

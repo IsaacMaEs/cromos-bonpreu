@@ -208,6 +208,18 @@ button.avatar{border:0;padding:0;font:inherit;font-weight:800}
 .pf-lab input,.pf-lab select{font:inherit;font-size:14px;color:var(--ink);padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;width:100%}
 .pf-edit{background:var(--green-soft);color:var(--green);font-weight:700;font-size:12.5px;padding:4px 12px;border-radius:99px}
 
+/* Vídeo de la recepta */
+.vid{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin:0 0 12px;text-align:left}
+.vid-h{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.vid-play{width:38px;height:38px;border-radius:50%;background:var(--yellow);color:var(--green);display:grid;place-items:center;font-size:15px;flex:none}
+.vid-h b{display:block;font-size:14.5px}
+.vid-h small{color:var(--muted);font-size:12.5px}
+.vid-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.vid-a{display:grid;justify-items:center;gap:2px;border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-decoration:none;color:var(--ink);font-size:12px;font-weight:700;transition:border-color .15s}
+.vid-a:hover{border-color:var(--green2)}
+.vid-a span{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px}
+.vid-a small{font-weight:500;color:var(--muted);font-size:10.5px}
+
 /* Targeta */
 .linkbtn{background:none;padding:0;color:var(--green);font-weight:700;font-size:12.5px;text-decoration:underline;text-underline-offset:2px}
 .bcard{display:block;width:100%;aspect-ratio:1.586;background:none;padding:0;perspective:1000px;margin:4px 0 8px}
@@ -372,6 +384,31 @@ const CROMOS = [
    premi:{t:'-25%', d:'Kit DIY Crema de Cacauet Casolana', x:'Cacauets Frit Ravich, mel i pots de vidre per fer la teva crema de cacauet. Ideal per a bowls i torrades'}},
 ];
 const byId = Object.fromEntries(CROMOS.map(c=>[c.id,c]));
+
+/* Xarxes oficials de Bonpreu (enllaçades des del peu de bonpreuesclat.cat).
+   VIDEOS: quan Bonpreu publiqui el reel/vídeo de cada recepta, enganxeu-ne l'URL exacta aquí.
+   Mentre estigui buit, el botó porta al perfil oficial de la xarxa. */
+const XARXES = {
+  instagram:{nom:'Instagram', tipus:'reel',  url:'https://instagram.com/bonpreuesclat',               ic:'IG', bg:'linear-gradient(45deg,#f9a825,#e91e63,#7b1fa2)'},
+  facebook: {nom:'Facebook',  tipus:'vídeo', url:'https://www.facebook.com/supermercatsbonpreuesclat', ic:'f',  bg:'#1877f2'},
+  x:        {nom:'X',         tipus:'post',  url:'https://twitter.com/bonpreuesclat',                 ic:'𝕏', bg:'#111'},
+};
+const VIDEOS = {
+  bruna:       {recepta:'Spice Latte de Carbassa',          instagram:'', facebook:'', x:''},
+  castanya:    {recepta:'Barra de Xocolata Calenta',        instagram:'', facebook:'', x:''},
+  energia:     {recepta:'Galetes Cozy de Tardor',           instagram:'', facebook:'', x:''},
+  llonganissa: {recepta:"Taula d'Embotits de Vic",          instagram:'', facebook:'', x:''},
+  boniato:     {recepta:"Patates de Boniato a l'Air Fryer", instagram:'', facebook:'', x:''},
+  cacauets:    {recepta:'Crema de Cacauet Casolana',        instagram:'', facebook:'', x:''},
+};
+function videoLinks(id){
+  const v=VIDEOS[id]; if(!v) return '';
+  return `<div class="vid">
+    <div class="vid-h"><span class="vid-play">▶</span><div><b>Mira com es fa</b><small>${esc(v.recepta)} amb el teu kit, pas a pas</small></div></div>
+    <div class="vid-btns">${Object.entries(XARXES).map(([k,x])=>`<a href="${esc(v[k]||x.url)}" target="_blank" rel="noopener noreferrer" class="vid-a">
+      <span style="background:${x.bg}">${x.ic}</span>${x.nom}<small>Veure el ${x.tipus}</small></a>`).join('')}</div>
+  </div>`;
+}
 const img = (id,i) => `cromos/${id}${i?'_'+i:''}.jpg?v=3`;
 
 const KEY='bonpreu-cromos-v2';
@@ -451,6 +488,7 @@ function renderUnlock(id){
       <small>${c.premi.x} · Vàlid fins al 31/12 · Només per a qui completa el cromo</small>
       <span class="code">${id.toUpperCase().slice(0,6)}-${(id.length*1373%9000+1000)}</span>
     </div>
+    ${videoLinks(id)}
     <button class="btn wide" data-go="share" data-id="${id}">📤 Compartir a les xarxes</button>
   </div>`;
 }

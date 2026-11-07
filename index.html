@@ -739,16 +739,18 @@ document.addEventListener('change', e=>{
 $('#amount').addEventListener('input', renderSim); $('#amountE').addEventListener('input', renderSim);
 $('#reset').addEventListener('click', ()=>{ S=fresh(); S.perfil={...PERFIL0}; save(); renderSim(); setStep(0); show('album'); $('#notif').classList.remove('show'); });
 $('#demoFill').addEventListener('click', ()=>{
-  // Deixa cada cromo a 2–3 peces perquè la demo arribi ràpid al cromo complet
-  // (mai treu peces que ja tinguis)
-  let added=0;
-  CROMOS.forEach((c,k)=>{ const base = k%2? [1,1,1,0] : [1,0,1,0];
-    S.pieces[c.id] = S.pieces[c.id].map((v,i)=>{ if(!v&&base[i]) added++; return v||base[i]; }); });
-  S.first=false; S.log.unshift(`⚡ Demo: +${added} ${added===1?'peça':'peces'} repartides. Ara fes servir un servei per completar un cromo`);
+  // Completa 1 cromo sencer (la Bruna) i reparteix algunes peces als altres.
+  // Mai treu peces que ja tinguis.
+  const DEMO = {bruna:[1,1,1,1], castanya:[1,1,0,1], energia:[1,0,1,0], llonganissa:[0,1,0,0], boniato:[1,0,0,1], cacauets:[0,0,1,0]};
+  let added=0; const got=[];
+  CROMOS.forEach(c=>{ const base=DEMO[c.id]||[0,0,0,0];
+    S.pieces[c.id] = S.pieces[c.id].map((v,i)=>{ if(!v&&base[i]){ added++; got.push({id:c.id,i}); } return v||base[i]; }); });
+  S.first=false; S.log.unshift(`⚡ Demo: Bruna del Pirineu completada i +${added} ${added===1?'peça':'peces'} repartides`);
   save(); renderSim(); show('album');
   $('.phone').scrollIntoView({behavior:'smooth', block:'center'});
-  document.querySelectorAll('.ccard').forEach(e=>e.classList.add('flash'));
-  toast(added ? `⚡ +${added} ${added===1?'peça':'peces'} a l'àlbum!` : 'Ja tenies l\'àlbum preparat');
+  const bruna = got.filter(g=>g.id==='bruna');
+  if(bruna.length) setTimeout(()=>notify('super', bruna, bruna.length, false), 500);   // avís "Cromo completat!" → toca per veure el premi
+  else toast(added ? `⚡ +${added} ${added===1?'peça':'peces'} a l'àlbum!` : 'Ja tenies l\'àlbum preparat');
 });
 
 setInterval(()=>{ const d=new Date(); $('#clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'); }, 10000);

@@ -242,6 +242,33 @@ button.avatar{border:0;padding:0;font:inherit;font-weight:800}
 .mega-cta{width:100%;background:linear-gradient(135deg,#2a1450,#8a3fb5);color:#fff;border-radius:14px;padding:11px 12px;margin:0 0 12px;font-size:13.5px;text-align:left}
 .mega-cta b{color:var(--yellow)}
 
+/* Premis passats */
+.past{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.past h4{margin:0 0 6px;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+.past h4 span{font-size:11px;font-weight:700;color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:99px}
+.past-row{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--line);opacity:.6;filter:grayscale(.7)}
+.past-row:last-of-type{border-bottom:0}
+.past-ic{width:30px;height:30px;border-radius:9px;background:var(--bg);display:grid;place-items:center;font-size:16px;flex:none}
+.past-txt{flex:1;min-width:0}
+.past-txt b{display:block;font-size:12.5px;text-decoration:line-through}
+.past-txt small{color:var(--muted);font-size:11.5px}
+.past-tag{font-size:10.5px;font-weight:800;color:#b3261e;border:1px solid #e8b4b0;border-radius:99px;padding:1px 7px;white-space:nowrap}
+
+/* Beneficis */
+.ben-intro{background:var(--green-soft);border-radius:12px;padding:9px 11px;font-size:13px;margin-bottom:10px}
+.ben{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.ben.open{border-color:var(--green2)}
+.ben-row{width:100%;display:flex;align-items:center;gap:10px;background:none;padding:10px;text-align:left}
+.ben-ic{width:42px;height:42px;border-radius:12px;background:var(--yellow-soft);display:grid;place-items:center;font-size:22px;flex:none}
+.ben-txt{flex:1;min-width:0}
+.ben-txt b{display:block;font-family:"Baloo 2";font-size:16.5px;color:var(--green);line-height:1.15}
+.ben-txt small{color:var(--muted);font-size:12px}
+.ben-go{background:var(--green);color:#fff;font-size:12px;font-weight:700;padding:5px 11px;border-radius:99px;white-space:nowrap}
+.ben.open .ben-go{background:var(--green-soft);color:var(--green)}
+.ben-code{padding:0 12px 12px;display:grid;gap:6px;justify-items:start}
+.ben-code small{color:var(--muted);font-size:12px}
+.ben-code .code{background:var(--green-soft);border-radius:8px;padding:4px 10px;font-weight:700;letter-spacing:1px;font-size:13px}
+
 /* Adhesiu físic */
 .stk{margin:0 0 12px;text-align:left}
 .stk-btn{position:relative;z-index:1;width:100%;display:flex;align-items:center;gap:10px;background:var(--yellow);color:var(--green);border-radius:16px;padding:12px;text-align:left;box-shadow:0 6px 16px -8px rgba(224,168,0,.8);animation:stkpulse 1.8s ease-in-out 3}
@@ -372,10 +399,12 @@ button.avatar{border:0;padding:0;font:inherit;font-weight:800}
       <section class="scr" id="s-profile"></section>
       <section class="scr" id="s-card"></section>
       <section class="scr" id="s-mega"></section>
+      <section class="scr" id="s-benefits"></section>
 
       <nav class="tabbar">
         <button class="on" data-tab="album"><span>🃏</span>Àlbum</button>
         <button data-tab="prizes"><span>🎁</span>Premis</button>
+        <button data-tab="benefits"><span>⭐</span>Beneficis</button>
         <button data-tab="card"><span>💳</span>Targeta</button>
         <button data-tab="profile"><span>👤</span>Perfil</button>
       </nav>
@@ -584,10 +613,41 @@ function renderShare(id){
 
 /* ---------- Recompensa especial: àlbum complet ---------- */
 const MEGA = [
-  {ic:'🥪', t:'2x1 a Viena',              d:'Entrepans i menús: el segon, gratis', codi:'VIENA-2X1'},
-  {ic:'👟', t:'-20% a Munich',            d:'Bambes i roba Munich',                codi:'MUNICH-20'},
-  {ic:'🎢', t:'2 entrades a PortAventura', d:'Per a tu i qui vulguis',              codi:'PA-2ENT'},
+  {ic:'🎢', t:'2 entrades a PortAventura', d:'Per a tu i qui vulguis', codi:'PA-2ENT'},
 ];
+
+/* Premis de la temporada passada (col·lecció d'estiu), ja caducats */
+const PASSATS = [
+  {ic:'🍅', t:'-25% Kit DIY Gaspatxo Andalús',          c:'La Tomaca del Maresme'},
+  {ic:'🍋', t:'-30% Kit DIY Granissat de Llimona',      c:'La Llimona Fresqueta'},
+  {ic:'🍉', t:'-25% Kit DIY Amanida de Síndria i Feta', c:'La Síndria Platjera'},
+  {ic:'🍑', t:'-20% Kit DIY Polos de Préssec',          c:'El Préssec de Lleida'},
+  {ic:'🐟', t:'-25% Kit DIY Sardinada a la Brasa',      c:'La Sardina Saltarina'},
+];
+
+/* Beneficis per ser client (sempre disponibles, no depenen dels cromos) */
+const BENEFICIS = [
+  {ic:'🥪', t:'2x1 a Viena',          d:'Entrepans i menús: el segon, gratis',  cond:'Cada dimarts i dijous',      codi:'VIENA-2X1'},
+  {ic:'👟', t:'-20% a Munich',        d:'Bambes i roba Munich',                cond:'A botigues i web',           codi:'MUNICH-20'},
+  {ic:'🎬', t:'-30% al cinema',       d:'Entrades als cinemes adherits',       cond:'De dilluns a dijous',        codi:'CINE-30'},
+  {ic:'🏨', t:'-15% en hotels',       d:'Escapades a hotels de Catalunya',     cond:'Reservant amb el codi',      codi:'HOTEL-15'},
+];
+let benOpen=null;
+function renderBenefits(){
+  const A=antiguitat();
+  $('#s-benefits').innerHTML = `
+    <div class="apphead"><div class="logo">Beneficis</div><span class="lvl lvl-${A.nivell}">Client ${A.nivell}</span></div>
+    <div class="ben-intro">Descomptes exclusius per ser client Bonpreu. Sempre actius, no cal completar cap cromo.</div>
+    ${BENEFICIS.map((b,i)=>`<div class="ben ${benOpen===i?'open':''}">
+      <button class="ben-row" data-ben="${i}" aria-expanded="${benOpen===i}">
+        <span class="ben-ic">${b.ic}</span>
+        <span class="ben-txt"><b>${b.t}</b><small>${b.d}</small></span>
+        <span class="ben-go">${benOpen===i?'Amagar':'Activar'}</span>
+      </button>
+      ${benOpen===i?`<div class="ben-code"><small>${b.cond}. Ensenya aquest codi o fes-lo servir en línia:</small><span class="code">${b.codi}-${(4821+i*271)}</span></div>`:''}
+    </div>`).join('')}
+    <small class="mega-legal">Beneficis de demostració per al prototip.</small>`;
+}
 const allDone = () => CROMOS.every(c=>isDone(c.id));
 function megaCard(){
   const n=CROMOS.filter(c=>isDone(c.id)).length, ok=n===CROMOS.length;
@@ -622,7 +682,12 @@ function renderPrizes(){
     ${megaCard()}
     ${done.length? done.map(c=>`<button class="prize" data-go="unlock" data-id="${c.id}"><img src="${img(c.id)}" alt=""><div><b>${c.premi.t} · ${c.premi.d}</b><small>${c.nom}</small></div></button>`).join('')
       : `<div class="empty">🎁<br>Encara no tens cap premi.<br>Completa un cromo per desbloquejar el primer lot estalvi.</div>`}
-    <div class="box" style="margin-top:8px"><h4>Pròxims premis</h4>${CROMOS.filter(c=>!isDone(c.id)).map(c=>`<div style="font-size:12.5px;padding:2px 0">🔒 ${c.premi.t} ${c.premi.d} <span style="color:var(--muted)">(${count(c.id)}/4)</span></div>`).join('')||'Ho tens tot! 🏆'}</div>`;
+    <div class="box" style="margin-top:8px"><h4>Pròxims premis</h4>${CROMOS.filter(c=>!isDone(c.id)).map(c=>`<div style="font-size:12.5px;padding:2px 0">🔒 ${c.premi.t} ${c.premi.d} <span style="color:var(--muted)">(${count(c.id)}/4)</span></div>`).join('')||'Ho tens tot! 🏆'}</div>
+    <div class="past">
+      <h4>Premis passats <span>Col·lecció d'estiu</span></h4>
+      ${PASSATS.map(x=>`<div class="past-row"><span class="past-ic">${x.ic}</span><span class="past-txt"><b>${x.t}</b><small>${x.c}</small></span><span class="past-tag">Caducat</span></div>`).join('')}
+      <small class="mega-legal">Van caducar el 30/09/2026, en acabar la temporada d'estiu.</small>
+    </div>`;
 }
 
 /* ---------- Perfil ---------- */
@@ -754,8 +819,9 @@ function show(name, id, anim){
   if(name==='profile'){ profEdit=false; profMonth=null; renderProfile(); }
   if(name==='card'){ cardFlip=false; renderCard(); }
   if(name==='mega'){ renderMega(); if(allDone()) confetti(); }
+  if(name==='benefits'){ benOpen=null; renderBenefits(); }
   const el = $('#s-'+name); el.classList.add('on'); el.scrollTop=0;
-  const tabs=['prizes','profile','card','mega'], cur = name==='mega'?'prizes':name;
+  const tabs=['prizes','profile','card','mega','benefits'], cur = name==='mega'?'prizes':name;
   document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===cur || (!tabs.includes(name)&&b.dataset.tab==='album')));
 }
 
@@ -868,6 +934,8 @@ document.addEventListener('click', e=>{
   if(e.target.closest('#bcard')){ cardFlip=!cardFlip; $('#bcard').classList.toggle('flip',cardFlip); $('.bc-hint').textContent = cardFlip?'Toca-la per tornar a la cara':'👆 Toca la targeta per veure el codi de barres'; return; }
   const stk=e.target.closest('[data-sticker]');
   if(stk){ const info=stk.nextElementSibling, open=info.hidden; info.hidden=!open; stk.setAttribute('aria-expanded', open); stk.classList.toggle('open', open); return; }
+  const ben=e.target.closest('[data-ben]');
+  if(ben){ const i=+ben.dataset.ben; benOpen = benOpen===i?null:i; renderBenefits(); return; }
   if(e.target.closest('[data-wallet]')){ toast('Afegida a la cartera ✓ (simulació)'); return; }
   const mo=e.target.closest('[data-month]'); if(mo){ const i=+mo.dataset.month; profMonth = profMonth===i?null:i; renderProfile(); return; }
   if(e.target.closest('#pfEdit')){

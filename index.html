@@ -409,7 +409,7 @@ function videoLinks(id){
       <span style="background:${x.bg}">${x.ic}</span>${x.nom}<small>Veure el ${x.tipus}</small></a>`).join('')}</div>
   </div>`;
 }
-const img = (id,i) => `cromos/${id}${i?'_'+i:''}.jpg?v=3`;
+const img = (id,i) => `cromos/${id}${i?'_'+i:''}.jpg?v=4`;
 
 const KEY='bonpreu-cromos-v2';
 const fresh = () => ({pieces:Object.fromEntries(CROMOS.map(c=>[c.id,[0,0,0,0]])), saldo:0, saldoEsclat:0, first:true, mesos:0, unlocked:[], log:[], ident:'app'});

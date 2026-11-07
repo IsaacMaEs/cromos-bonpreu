@@ -214,7 +214,7 @@ button.avatar{border:0;padding:0;font:inherit;font-weight:800}
 .vid-play{width:38px;height:38px;border-radius:50%;background:var(--yellow);color:var(--green);display:grid;place-items:center;font-size:15px;flex:none}
 .vid-h b{display:block;font-size:14.5px}
 .vid-h small{color:var(--muted);font-size:12.5px}
-.vid-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.vid-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .vid-a{display:grid;justify-items:center;gap:2px;border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-decoration:none;color:var(--ink);font-size:12px;font-weight:700;transition:border-color .15s}
 .vid-a:hover{border-color:var(--green2)}
 .vid-a span{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px}
@@ -385,21 +385,22 @@ const CROMOS = [
 ];
 const byId = Object.fromEntries(CROMOS.map(c=>[c.id,c]));
 
-/* Xarxes oficials de Bonpreu (enllaçades des del peu de bonpreuesclat.cat).
+/* Xarxes oficials de Bonpreu (peu de bonpreuesclat.cat; TikTok facilitat per l'equip).
    VIDEOS: quan Bonpreu publiqui el reel/vídeo de cada recepta, enganxeu-ne l'URL exacta aquí.
    Mentre estigui buit, el botó porta al perfil oficial de la xarxa. */
 const XARXES = {
+  tiktok:   {nom:'TikTok',    tipus:'vídeo', url:'https://www.tiktok.com/@bonpreuesclat',              ic:'♪',  bg:'#111'},
   instagram:{nom:'Instagram', tipus:'reel',  url:'https://instagram.com/bonpreuesclat',               ic:'IG', bg:'linear-gradient(45deg,#f9a825,#e91e63,#7b1fa2)'},
   facebook: {nom:'Facebook',  tipus:'vídeo', url:'https://www.facebook.com/supermercatsbonpreuesclat', ic:'f',  bg:'#1877f2'},
   x:        {nom:'X',         tipus:'post',  url:'https://twitter.com/bonpreuesclat',                 ic:'𝕏', bg:'#111'},
 };
 const VIDEOS = {
-  bruna:       {recepta:'Spice Latte de Carbassa',          instagram:'', facebook:'', x:''},
-  castanya:    {recepta:'Barra de Xocolata Calenta',        instagram:'', facebook:'', x:''},
-  energia:     {recepta:'Galetes Cozy de Tardor',           instagram:'', facebook:'', x:''},
-  llonganissa: {recepta:"Taula d'Embotits de Vic",          instagram:'', facebook:'', x:''},
-  boniato:     {recepta:"Patates de Boniato a l'Air Fryer", instagram:'', facebook:'', x:''},
-  cacauets:    {recepta:'Crema de Cacauet Casolana',        instagram:'', facebook:'', x:''},
+  bruna:       {recepta:'Spice Latte de Carbassa',          tiktok:'', instagram:'', facebook:'', x:''},
+  castanya:    {recepta:'Barra de Xocolata Calenta',        tiktok:'', instagram:'', facebook:'', x:''},
+  energia:     {recepta:'Galetes Cozy de Tardor',           tiktok:'', instagram:'', facebook:'', x:''},
+  llonganissa: {recepta:"Taula d'Embotits de Vic",          tiktok:'', instagram:'', facebook:'', x:''},
+  boniato:     {recepta:"Patates de Boniato a l'Air Fryer", tiktok:'', instagram:'', facebook:'', x:''},
+  cacauets:    {recepta:'Crema de Cacauet Casolana',        tiktok:'', instagram:'', facebook:'', x:''},
 };
 function videoLinks(id){
   const v=VIDEOS[id]; if(!v) return '';

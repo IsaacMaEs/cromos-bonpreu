@@ -402,7 +402,7 @@ const CROMOS = [
   {id:'boniato',     nom:'La Bruixa del Boniato',       servei:'comodi',  w:1254,h:1254, orig:'Dolça, màgica i autèntica',
    premi:{t:'-30%', d:"Kit DIY Patates de Boniato a l'Air Fryer", x:'Boniatos, pebre vermell fumat i salsa de iogurt per fer patates de boniato a l\'air fryer'}},
   {id:'cacauets',    nom:'Els Cacauets de Frit Ravich', servei:'comodi',  w:1230,h:1278, orig:'Frit Ravich · Maçanet de la Selva',
-   premi:{t:'-25%', d:'Kit DIY Crema de Cacauet Casolana', x:'Cacauets Frit Ravich, mel i pots de vidre per fer la teva crema de cacauet. Ideal per a bowls i torrades'}},
+   premi:{t:'-25%', d:'Kit DIY Panellets de Cacauet', x:'Cacauets Frit Ravich, ametlla mòlta, sucre, ou i pinyons per fer panellets diferents per la Castanyada'}},
 ];
 const byId = Object.fromEntries(CROMOS.map(c=>[c.id,c]));
 
@@ -421,7 +421,7 @@ const VIDEOS = {
   energia:     {recepta:'Galetes Cozy de Tardor',           tiktok:'', instagram:'', facebook:'', x:''},
   llonganissa: {recepta:"Taula d'Embotits de Vic",          tiktok:'', instagram:'', facebook:'', x:''},
   boniato:     {recepta:"Patates de Boniato a l'Air Fryer", tiktok:'', instagram:'', facebook:'', x:''},
-  cacauets:    {recepta:'Crema de Cacauet Casolana',        tiktok:'', instagram:'', facebook:'', x:''},
+  cacauets:    {recepta:'Panellets de Cacauet',             tiktok:'', instagram:'', facebook:'', x:''},
 };
 function videoLinks(id){
   const v=VIDEOS[id]; if(!v) return '';

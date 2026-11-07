@@ -286,7 +286,7 @@ button.avatar{border:0;padding:0;font:inherit;font-weight:800}
         <button class="btn" data-act="online">Fer comanda online</button>
       </div>
       <div class="tools">
-        <button class="btn ghost" id="demoFill">⚡ Omplir per a la demo</button>
+        <button class="btn ghost" id="demoFill" title="Deixa tots els cromos a 2–3 peces per arribar ràpid a un cromo complet">⚡ Omplir per a la demo</button>
         <button class="btn ghost" id="reset">↺ Reiniciar</button>
       </div>
     </div>
@@ -740,8 +740,15 @@ $('#amount').addEventListener('input', renderSim); $('#amountE').addEventListene
 $('#reset').addEventListener('click', ()=>{ S=fresh(); S.perfil={...PERFIL0}; save(); renderSim(); setStep(0); show('album'); $('#notif').classList.remove('show'); });
 $('#demoFill').addEventListener('click', ()=>{
   // Deixa cada cromo a 2–3 peces perquè la demo arribi ràpid al cromo complet
-  CROMOS.forEach((c,k)=>{ S.pieces[c.id] = k%2? [1,1,1,0] : [1,0,1,0]; });
-  S.first=false; S.log.unshift('⚡ Àlbum preparat per a la demo'); save(); renderSim(); show('album');
+  // (mai treu peces que ja tinguis)
+  let added=0;
+  CROMOS.forEach((c,k)=>{ const base = k%2? [1,1,1,0] : [1,0,1,0];
+    S.pieces[c.id] = S.pieces[c.id].map((v,i)=>{ if(!v&&base[i]) added++; return v||base[i]; }); });
+  S.first=false; S.log.unshift(`⚡ Demo: +${added} ${added===1?'peça':'peces'} repartides. Ara fes servir un servei per completar un cromo`);
+  save(); renderSim(); show('album');
+  $('.phone').scrollIntoView({behavior:'smooth', block:'center'});
+  document.querySelectorAll('.ccard').forEach(e=>e.classList.add('flash'));
+  toast(added ? `⚡ +${added} ${added===1?'peça':'peces'} a l'àlbum!` : 'Ja tenies l\'àlbum preparat');
 });
 
 setInterval(()=>{ const d=new Date(); $('#clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'); }, 10000);

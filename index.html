@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cromos Bonpreu · Prototip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0b5a2a; --green2:#13803d; --green-soft:#e7f3ea;
+  --yellow:#ffd200; --yellow-soft:#fff6c7;
+  --ink:#16241b; --muted:#5d6b62; --line:#dfe6e1;
+  --bg:#f3f6f2; --card:#ffffff;
+  --super:#13803d; --esclat:#e85d1c; --energia:#e0a800; --online:#2f6fd6;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.45}
+h1,h2,h3,.baloo{font-family:"Baloo 2",Inter,sans-serif;line-height:1.1;margin:0}
+button{font:inherit;cursor:pointer;border:0}
+.top{background:var(--green);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top h1{font-size:24px}
+.top .tag{background:var(--yellow);color:var(--green);font-weight:700;font-size:12px;padding:3px 10px;border-radius:99px}
+.top p{margin:0;opacity:.85;font-size:14px;flex-basis:100%}
+.wrap{display:grid;grid-template-columns:minmax(260px,330px) 400px minmax(260px,340px);gap:28px;justify-content:center;padding:24px 16px 48px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.panel h2{font-size:20px;margin-bottom:4px}
+.panel .sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+.stack{display:grid;gap:16px}
+
+/* Simulator */
+.svc{border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:8px;margin-bottom:10px}
+.svc-h{display:flex;align-items:center;gap:10px}
+.svc-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px;color:#fff;flex:none}
+.svc-h b{display:block}
+.svc-h small{color:var(--muted);font-size:12px}
+.btn{background:var(--green);color:#fff;border-radius:10px;padding:9px 12px;font-weight:600;font-size:14px;transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.1)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--green);border:1px solid var(--line)}
+.btn.y{background:var(--yellow);color:var(--green)}
+.row{display:flex;gap:8px;align-items:center}
+.row input[type=range]{flex:1;accent-color:var(--green)}
+.amt{font-weight:700;min-width:52px;text-align:right}
+.saldo{font-size:12px;color:var(--muted)}
+.idsel{display:flex;gap:6px;margin-bottom:12px}
+.idsel button{flex:1;padding:7px;border-radius:9px;background:var(--bg);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
+.idsel button.on{background:var(--green-soft);border-color:var(--green2);color:var(--green)}
+.log{font-size:12.5px;max-height:150px;overflow:auto;display:grid;gap:4px;margin-top:6px}
+.log div{background:var(--bg);border-radius:8px;padding:5px 8px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Flow */
+.flow{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.flow li{position:relative;padding:0 0 16px 46px;transition:opacity .2s}
+.flow li:last-child{padding-bottom:0}
+.flow li::before{content:"";position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--line)}
+.flow li:last-child::before{display:none}
+.flow .n{position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--bg);border:2px solid var(--line);display:grid;place-items:center;font-weight:800;font-family:"Baloo 2";color:var(--muted);transition:all .25s}
+.flow b{display:block;padding-top:4px}
+.flow small{color:var(--muted);font-size:12.5px;display:block}
+.flow li.on .n{background:var(--yellow);border-color:var(--green);color:var(--green);transform:scale(1.12)}
+.flow li.on b{color:var(--green)}
+.flow li.done .n{background:var(--green);border-color:var(--green);color:#fff}
+.qs{margin:0;padding-left:18px;color:var(--ink);font-size:14px}
+.qs li{margin-bottom:4px}
+.note{background:var(--yellow-soft);border-radius:12px;padding:10px 12px;font-size:13px}
+
+/* Phone */
+.phone{width:400px;height:820px;background:#111;border-radius:52px;padding:12px;box-shadow:0 30px 60px -20px rgba(11,90,42,.45);position:sticky;top:16px}
+.screen-area{position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;background:#f7f8f5}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:110px;height:30px;background:#111;border-radius:20px;z-index:50}
+.statusbar{height:46px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 28px 6px;font-size:13px;font-weight:600;position:relative;z-index:5}
+.scr{position:absolute;inset:46px 0 64px 0;overflow-y:auto;padding:4px 16px 20px;display:none;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.scr.on{display:block;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:64px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:8px}
+.tabbar button{background:none;display:grid;justify-items:center;font-size:11px;font-weight:600;color:var(--muted);gap:1px}
+.tabbar button span{font-size:20px;filter:grayscale(1);opacity:.6}
+.tabbar button.on{color:var(--green)}
+.tabbar button.on span{filter:none;opacity:1}
+
+.apphead{display:flex;justify-content:space-between;align-items:center;margin:6px 0 12px}
+.logo{font-family:"Baloo 2";font-weight:800;color:var(--green);font-size:22px}
+.logo i{font-style:normal;color:var(--yellow);-webkit-text-stroke:.6px var(--green)}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font-weight:800;color:var(--green)}
+.hero{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;border-radius:18px;padding:14px 16px;margin-bottom:12px}
+.hero h3{font-size:21px}
+.hero .bar{height:10px;background:rgba(255,255,255,.25);border-radius:9px;margin:10px 0 6px;overflow:hidden}
+.hero .bar i{display:block;height:100%;background:var(--yellow);border-radius:9px;transition:width .5s}
+.hero small{opacity:.9;font-size:12.5px}
+.rules{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:12px}
+.rules h4{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between}
+.rules .r{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:3px 0}
+.dot{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:12px;flex:none;color:#fff}
+.gift{background:var(--yellow-soft);border-radius:9px;padding:6px 8px;font-size:12px;margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ccard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px;text-align:left;display:grid;gap:6px;position:relative}
+.ccard .thumb{aspect-ratio:1;display:grid;place-items:center;background:var(--bg);border-radius:10px;overflow:hidden}
+.ccard .thumb .puzzle{height:94%}
+.ccard .nm{font-weight:700;font-size:12.5px;line-height:1.2}
+.ccard .meta{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted)}
+.chip{font-size:10.5px;font-weight:700;color:#fff;padding:2px 7px;border-radius:99px}
+.ccard.complete{border-color:var(--yellow);box-shadow:0 0 0 2px var(--yellow)}
+.ccard .star{position:absolute;top:4px;right:4px;background:var(--yellow);color:var(--green);font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;z-index:2}
+.ccard.flash{animation:flash 1s ease 2}
+@keyframes flash{50%{box-shadow:0 0 0 4px var(--yellow)}}
+
+.puzzle{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;max-width:100%;max-height:100%}
+.pc{position:relative;overflow:hidden;border-radius:4px;background:#e6ebe6}
+.pc img{width:100%;height:100%;object-fit:cover;display:block}
+.pc.miss img{filter:grayscale(1) blur(6px) brightness(1.25);opacity:.28}
+.pc.miss::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;font-family:"Baloo 2";font-weight:800;color:#9aa69e;font-size:26px}
+.pc.new{animation:pop .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.2) rotate(-12deg);opacity:0}100%{transform:none;opacity:1}}
+.puzzle.done{gap:0}
+.puzzle.done .pc{border-radius:0}
+
+/* Detail */
+.back{background:none;color:var(--green);font-weight:700;padding:4px 0;margin-bottom:6px}
+.dt-title{font-size:24px;color:var(--green)}
+.dt-sub{color:var(--muted);font-size:13px;margin:2px 0 12px}
+.dt-puz{display:grid;place-items:center;margin-bottom:12px}
+.dt-puz .puzzle{width:100%}
+.prog{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prog .bar{flex:1;height:12px;background:var(--line);border-radius:9px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green2),var(--yellow));transition:width .6s}
+.prog b{font-family:"Baloo 2";font-size:22px;color:var(--green)}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;font-size:13.5px}
+.box h4{margin:0 0 4px;font-size:14px}
+.locked{display:flex;gap:10px;align-items:center}
+.locked .ic{font-size:26px}
+.wide{width:100%;padding:12px;border-radius:12px;font-size:15px}
+
+/* Notification */
+.notif{position:absolute;top:48px;left:10px;right:10px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-radius:20px;box-shadow:0 14px 40px rgba(0,0,0,.25);padding:12px;z-index:40;transform:translateY(-140%);transition:transform .45s cubic-bezier(.2,1.3,.4,1);cursor:pointer}
+.notif.show{transform:none}
+.notif .nh{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.notif .nh .ap{width:22px;height:22px;border-radius:6px;background:var(--green);color:var(--yellow);display:grid;place-items:center;font-weight:800;font-size:13px;font-family:"Baloo 2"}
+.notif .nb{display:flex;gap:10px;align-items:center;margin-top:8px}
+.notif .pcs{display:flex;gap:4px;flex:none}
+.notif .pcs img{width:46px;height:46px;object-fit:cover;border-radius:8px;border:2px solid var(--yellow)}
+.notif b{display:block;font-size:14px}
+.notif small{font-size:12.5px;color:var(--ink)}
+.notif .tap{font-size:11.5px;color:var(--green);font-weight:700;margin-top:6px;text-align:right}
+
+/* Unlocked */
+.unl{text-align:center;padding-top:8px}
+.unl .burst{font-size:15px;font-weight:800;color:var(--green);background:var(--yellow);display:inline-block;padding:4px 14px;border-radius:99px;margin-bottom:10px}
+.unl h3{font-size:26px;color:var(--green)}
+.unl .full{width:72%;margin:12px auto;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.2);animation:spinin .9s cubic-bezier(.2,1.4,.4,1)}
+@keyframes spinin{from{transform:rotateY(90deg) scale(.6)}to{transform:none}}
+.coupon{border:2px dashed var(--green2);border-radius:16px;padding:12px;background:var(--green-soft);margin:6px 0 12px;text-align:left}
+.coupon .pct{font-family:"Baloo 2";font-size:30px;font-weight:800;color:var(--green);line-height:1}
+.coupon .code{display:inline-block;margin-top:6px;background:#fff;border-radius:8px;padding:4px 10px;font-weight:700;letter-spacing:1px;font-size:13px}
+.coupon small{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.confetti{position:absolute;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(860px) rotate(720deg)}}
+
+/* Share */
+.story{aspect-ratio:9/14;border-radius:20px;background:linear-gradient(160deg,var(--green) 0%,var(--green2) 60%,#5fae3c 100%);color:#fff;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
+.story::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,210,0,.18);top:-100px;right:-120px}
+.story .s1{font-family:"Baloo 2";font-weight:800;font-size:20px;position:relative}
+.story img{max-width:78%;max-height:62%;border-radius:12px;border:4px solid #fff;box-shadow:0 10px 25px rgba(0,0,0,.3);position:relative}
+.story .s2{font-size:13px;position:relative}
+.story .s2 b{color:var(--yellow)}
+.nets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.nets button{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 2px;font-size:11px;font-weight:600;display:grid;justify-items:center;gap:3px}
+.nets button span{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:16px;font-weight:800}
+.toast{position:absolute;bottom:78px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:8px 14px;border-radius:99px;font-size:13px;opacity:0;transition:all .3s;z-index:45;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.empty{color:var(--muted);text-align:center;padding:30px 10px;font-size:14px}
+.prize{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px;text-align:left;width:100%}
+.prize img{width:54px;height:54px;object-fit:cover;border-radius:10px}
+.prize b{display:block;font-size:13.5px}
+.prize small{color:var(--muted);font-size:12px}
+
+@media (max-width:1180px){
+  .wrap{grid-template-columns:minmax(0,400px) minmax(0,400px)}
+  .col-flow{grid-column:1 / -1;max-width:828px;width:100%;justify-self:center}
+}
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr);padding:16px}
+  .phone{width:100%;max-width:400px;height:780px;justify-self:center;position:relative;top:0;order:-1}
+  .col-flow{max-width:none}
+}
+@media (max-width:420px){
+  .phone{padding:6px;border-radius:40px;height:740px}
+  .screen-area{border-radius:34px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>Cromos Bonpreu</h1><span class="tag">Prototip · Servei digital</span>
+  <p>Fes servir qualsevol dels 4 serveis (Súper, Esclat, Energia, Online) i guanya peces de cromos de productes i tradicions catalanes. Completa'ls i desbloqueja lots estalvi exclusius.</p>
+</header>
+
+<main class="wrap">
+  <!-- Simulador -->
+  <section class="stack">
+    <div class="panel">
+      <h2>1 · Simula l'ús d'un servei</h2>
+      <p class="sub">Això és el que faria l'usuari al món real. El mòbil reacciona com ho faria l'app.</p>
+      <div class="idsel" id="idsel">
+        <button class="on" data-id="app">📱 Amb l'app</button>
+        <button data-id="targeta">💳 Amb la targeta</button>
+      </div>
+
+      <div class="svc">
+        <div class="svc-h"><div class="svc-ic" style="background:var(--super)">🛒</div><div><b>Compra al súper</b><small>+1 peça cada 10 €</small></div></div>
+        <div class="row"><input type="range" id="amount" min="5" max="80" step="1" value="34"><span class="amt" id="amtv">34 €</span></div>
+        <div class="saldo" id="saldo"></div>
+        <button class="btn" data-act="super">Pagar al súper</button>
+      </div>
+      <div class="svc">
+        <div class="svc-h"><div class="svc-ic" style="background:var(--esclat)">⛽</div><div><b>Repostar a Esclat</b><small>+1 peça per repostatge</small></div></div>
+        <button class="btn" data-act="esclat">Repostar</button>
+      </div>
+      <div class="svc">
+        <div class="svc-h"><div class="svc-ic" style="background:var(--energia)">⚡</div><div><b>Bonpreu Energia</b><small>+1 peça cada mes de contracte</small></div></div>
+        <button class="btn" data-act="energia" id="btnEnergia">Passar un mes</button>
+      </div>
+      <div class="svc">
+        <div class="svc-h"><div class="svc-ic" style="background:var(--online)">💻</div><div><b>Comanda online</b><small>+1 peça per comanda</small></div></div>
+        <button class="btn" data-act="online">Fer comanda online</button>
+      </div>
+      <div class="tools">
+        <button class="btn ghost" id="demoFill">⚡ Omplir per a la demo</button>
+        <button class="btn ghost" id="reset">↺ Reiniciar</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Activitat</h2>
+      <p class="sub">El que el sistema ha detectat.</p>
+      <div class="log" id="log"><div>Encara no hi ha cap acció.</div></div>
+    </div>
+  </section>
+
+  <!-- Mòbil -->
+  <div class="phone">
+    <div class="screen-area" id="sa">
+      <div class="notch"></div>
+      <div class="statusbar"><span id="clock">9:41</span><span>📶 🔋</span></div>
+
+      <div class="notif" id="notif"></div>
+
+      <section class="scr on" id="s-album"></section>
+      <section class="scr" id="s-detail"></section>
+      <section class="scr" id="s-unlock"></section>
+      <section class="scr" id="s-share"></section>
+      <section class="scr" id="s-prizes"></section>
+
+      <nav class="tabbar">
+        <button class="on" data-tab="album"><span>🃏</span>Àlbum</button>
+        <button data-tab="prizes"><span>🎁</span>Premis</button>
+        <button data-tab="card"><span>💳</span>Targeta</button>
+      </nav>
+      <div class="toast" id="toast"></div>
+      <div class="confetti" id="confetti"></div>
+    </div>
+  </div>
+
+  <!-- Flux -->
+  <section class="stack col-flow">
+    <div class="panel">
+      <h2>2 · Com funciona</h2>
+      <p class="sub">El pas actiu s'il·lumina mentre proves el prototip.</p>
+      <ol class="flow" id="flow">
+        <li><span class="n">1</span><b>Fas servir un servei</b><small>Súper, Esclat, Energia o online. T'identifiques amb l'app o la targeta Bonpreu.</small></li>
+        <li><span class="n">2</span><b>El sistema assigna una peça</b><small>Detecta la transacció i dona una peça nova (mai repetida) del cromo d'aquell servei.</small></li>
+        <li><span class="n">3</span><b>Notificació i progrés</b><small>Reps la peça a l'instant i veus quantes et falten (p. ex. 3/4).</small></li>
+        <li><span class="n">4</span><b>Cromo complet = lot estalvi</b><small>Amb les 4 peces desbloqueges el descompte exclusiu de temporada.</small></li>
+        <li><span class="n">5</span><b>El comparteixes</b><small>Story llesta per a Instagram, TikTok o WhatsApp.</small></li>
+      </ol>
+    </div>
+    <div class="panel">
+      <h2>Test ràpid</h2>
+      <p class="sub">Preguntes per a 3–5 joves després de provar-ho.</p>
+      <ol class="qs">
+        <li>Entens com s'aconsegueix?</li>
+        <li>Tornaries per completar-lo?</li>
+        <li>Quin servei faries servir de més?</li>
+        <li>El compartiries?</li>
+      </ol>
+    </div>
+    <div class="panel note">
+      <b>Millora aplicada:</b> la primera peça s'aconsegueix a la primera compra (encara que sigui de menys de 10 €), i les regles de cada servei es veuen sempre a l'àlbum.
+    </div>
+  </section>
+</main>
+
+<script>
+const SERVEIS = {
+  super:  {nom:'Súper',   ic:'🛒', color:'var(--super)',   regla:'+1 peça cada 10 € de compra'},
+  esclat: {nom:'Esclat',  ic:'⛽', color:'var(--esclat)',  regla:'+1 peça per repostatge'},
+  energia:{nom:'Energia', ic:'⚡', color:'var(--energia)', regla:'+1 peça cada mes de contracte'},
+  online: {nom:'Online',  ic:'💻', color:'var(--online)',  regla:'+1 peça per comanda online'},
+};
+const CROMOS = [
+  {id:'bruna',       nom:'La Bruna del Pirineu',        servei:'super',   w:1024,h:1536, orig:'Llet Nostra · Pirineu',
+   premi:{t:'-25%', d:'Lot làctic Llet Nostra', x:'Llet, iogurts i formatges del Pirineu'}},
+  {id:'calcot',      nom:'Calçot Xop de Romesco',       servei:'super',   w:728, h:1024, orig:'Calçot de Valls · Alt Camp',
+   premi:{t:'-20%', d:'Lot calçotada', x:'Calçots, salsa romesco i carn a la brasa'}},
+  {id:'castanya',    nom:'La Castanya de Halloween',    servei:'esclat',  w:1254,h:1254, orig:'Només a les benzineres Esclat',
+   premi:{t:'Gratis', d:'Castanyes + cafè a Esclat', x:'I 5 cèntims/litre al pròxim repostatge'}},
+  {id:'energia',     nom:'La Bombeta Energia',          servei:'energia', w:1254,h:1254, orig:'Bonpreu Energia',
+   premi:{t:'15 €', d:'Descompte a la factura de llum', x:'S\'aplica a la propera factura'}},
+  {id:'llonganissa', nom:'La Llonganissa de Vic',       servei:'online',  w:1230,h:1278, orig:'Casa Riera Ordeix · Vic',
+   premi:{t:'-25%', d:'Lot embotits de Vic', x:'Llonganissa, fuet i secallona Casa Riera Ordeix'}},
+  {id:'cacauets',    nom:'Els Cacauets de Frit Ravich', servei:'online',  w:1230,h:1278, orig:'Frit Ravich · Maçanet de la Selva',
+   premi:{t:'-25%', d:'Lot aperitiu Frit Ravich', x:'Fruits secs i snacks per a la tarda'}},
+];
+const byId = Object.fromEntries(CROMOS.map(c=>[c.id,c]));
+const img = (id,i) => `cromos/${id}${i?'_'+i:''}.jpg`;
+
+const KEY='bonpreu-cromos-v1';
+const fresh = () => ({pieces:Object.fromEntries(CROMOS.map(c=>[c.id,[0,0,0,0]])), saldo:0, first:true, mesos:0, unlocked:[], log:[], ident:'app'});
+let S; try{ S = JSON.parse(localStorage.getItem(KEY)) || fresh(); }catch(e){ S = fresh(); }
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+
+const $ = s => document.querySelector(s);
+const count = id => S.pieces[id].reduce((a,b)=>a+b,0);
+const isDone = id => count(id)===4;
+let current='album', detailId=null, newPieces={};
+
+function puzzle(c, opts={}){
+  const p = S.pieces[c.id], done = p.every(Boolean);
+  return `<div class="puzzle ${done?'done':''}" style="aspect-ratio:${c.w}/${c.h}">${
+    [1,2,3,4].map(i=>`<div class="pc ${p[i-1]?'':'miss'} ${opts.anim && newPieces[c.id]?.includes(i-1)?'new':''}"><img src="${img(c.id,i)}" alt="Peça ${i}"></div>`).join('')
+  }</div>`;
+}
+
+/* ---------- Screens ---------- */
+function renderAlbum(){
+  const total = CROMOS.reduce((a,c)=>a+count(c.id),0), complets = CROMOS.filter(c=>isDone(c.id)).length;
+  $('#s-album').innerHTML = `
+    <div class="apphead"><div class="logo">Bonpreu <i>●</i></div><div class="avatar">M</div></div>
+    <div class="hero">
+      <h3>El teu àlbum de tardor</h3>
+      <div class="bar"><i style="width:${total/24*100}%"></i></div>
+      <small><b>${total}/24 peces</b> · ${complets} de 6 cromos complets</small>
+    </div>
+    <div class="rules">
+      <h4><span>Com aconsegueixes peces</span><span style="color:var(--muted);font-weight:500">Sense repetides</span></h4>
+      ${Object.values(SERVEIS).map(s=>`<div class="r"><span class="dot" style="background:${s.color}">${s.ic}</span><span><b>${s.nom}:</b> ${s.regla}</span></div>`).join('')}
+      <div class="gift">🎁 <b>Benvinguda:</b> la teva primera compra sempre et dona una peça.</div>
+    </div>
+    <div class="grid">${CROMOS.map(c=>{const s=SERVEIS[c.servei], n=count(c.id);return `
+      <button class="ccard ${n===4?'complete':''}" data-open="${c.id}" id="card-${c.id}">
+        ${n===4?'<span class="star">COMPLET ★</span>':''}
+        <div class="thumb">${puzzle(c)}</div>
+        <div class="nm">${c.nom}</div>
+        <div class="meta"><span class="chip" style="background:${s.color}">${s.ic} ${s.nom}</span><b>${n}/4</b></div>
+      </button>`}).join('')}</div>`;
+}
+
+function renderDetail(id, anim){
+  const c=byId[id], s=SERVEIS[c.servei], n=count(id), falten=4-n;
+  $('#s-detail').innerHTML = `
+    <button class="back" data-go="album">‹ Àlbum</button>
+    <h3 class="dt-title">${c.nom}</h3>
+    <div class="dt-sub">${c.orig} · <span class="chip" style="background:${s.color}">${s.ic} ${s.nom}</span></div>
+    <div class="dt-puz">${puzzle(c,{anim})}</div>
+    <div class="prog"><div class="bar"><i style="width:${n*25}%"></i></div><b>${n}/4</b></div>
+    ${n<4 ? `
+      <div class="box"><h4>${falten===1?'Només et falta 1 peça!':`Et falten ${falten} peces`}</h4>
+        ${s.ic} ${s.regla.charAt(0).toUpperCase()+s.regla.slice(1)}. ${c.servei==='super'&&S.saldo?`Portes ${S.saldo} € cap a la propera.`:''}</div>
+      <div class="box locked"><span class="ic">🔒</span><div><h4>Premi: ${c.premi.t} ${c.premi.d}</h4><span style="color:var(--muted)">Es desbloqueja en completar les 4 peces.</span></div></div>`
+    : `
+      <button class="btn y wide" data-go="unlock" data-id="${id}">🎁 Veure el meu lot estalvi</button>
+      <div style="height:8px"></div>
+      <button class="btn wide" data-go="share" data-id="${id}">Compartir el cromo</button>`}
+  `;
+}
+
+function renderUnlock(id){
+  const c=byId[id];
+  $('#s-unlock').innerHTML = `<div class="unl">
+    <button class="back" data-go="album" style="float:left">‹ Àlbum</button><div style="clear:both"></div>
+    <span class="burst">CROMO COMPLET!</span>
+    <h3>Has desbloquejat un lot estalvi exclusiu</h3>
+    <img class="full" src="${img(id)}" alt="${c.nom}">
+    <div class="coupon">
+      <div class="pct">${c.premi.t}</div>
+      <b>${c.premi.d}</b>
+      <small>${c.premi.x} · Vàlid fins al 31/12 · Només per a qui completa el cromo</small>
+      <span class="code">${id.toUpperCase().slice(0,6)}-${(id.length*1373%9000+1000)}</span>
+    </div>
+    <button class="btn wide" data-go="share" data-id="${id}">📤 Compartir a les xarxes</button>
+  </div>`;
+}
+
+function renderShare(id){
+  const c=byId[id];
+  $('#s-share').innerHTML = `
+    <button class="back" data-go="unlock" data-id="${id}">‹ Tornar</button>
+    <h3 class="dt-title" style="margin-bottom:10px">Comparteix el teu cromo</h3>
+    <div class="story">
+      <div class="s1">He completat el cromo! 🎉</div>
+      <img src="${img(id)}" alt="${c.nom}">
+      <div class="s2"><b>${c.nom}</b><br>Col·lecciona'ls tots a l'app Bonpreu<br>#CromosBonpreu</div>
+    </div>
+    <div class="nets">
+      <button data-net="Instagram"><span style="background:linear-gradient(45deg,#f9a825,#e91e63,#7b1fa2)">IG</span>Stories</button>
+      <button data-net="TikTok"><span style="background:#111">♪</span>TikTok</button>
+      <button data-net="WhatsApp"><span style="background:#25d366">✆</span>WhatsApp</button>
+      <button data-net="l'enllaç"><span style="background:var(--muted)">🔗</span>Copiar</button>
+    </div>
+    <div class="box" style="font-size:12.5px;color:var(--muted)">Si un amic s'instal·la l'app amb el teu enllaç, tots dos guanyeu una peça.</div>`;
+}
+
+function renderPrizes(){
+  const done = CROMOS.filter(c=>isDone(c.id));
+  $('#s-prizes').innerHTML = `<div class="apphead"><div class="logo">Els meus premis</div></div>
+    ${done.length? done.map(c=>`<button class="prize" data-go="unlock" data-id="${c.id}"><img src="${img(c.id)}" alt=""><div><b>${c.premi.t} · ${c.premi.d}</b><small>${c.nom}</small></div></button>`).join('')
+      : `<div class="empty">🎁<br>Encara no tens cap premi.<br>Completa un cromo per desbloquejar el primer lot estalvi.</div>`}
+    <div class="box" style="margin-top:8px"><h4>Pròxims premis</h4>${CROMOS.filter(c=>!isDone(c.id)).map(c=>`<div style="font-size:12.5px;padding:2px 0">🔒 ${c.premi.t} ${c.premi.d} <span style="color:var(--muted)">(${count(c.id)}/4)</span></div>`).join('')||'Ho tens tot! 🏆'}</div>`;
+}
+
+function renderCard(){
+  $('#s-prizes').innerHTML = `<div class="apphead"><div class="logo">Targeta Bonpreu</div></div>
+    <div class="hero" style="padding:20px"><div class="baloo" style="font-size:20px">Bonpreu <span style="color:var(--yellow)">●</span></div>
+      <div style="background:#fff;border-radius:10px;padding:12px;margin:14px 0 8px;display:grid;place-items:center">
+      <svg viewBox="0 0 200 60" width="100%" height="60" aria-label="Codi de barres">${Array.from({length:46},(_,i)=>`<rect x="${4+i*4.2}" y="0" width="${(i*7%3)+1}" height="60" fill="#111"/>`).join('')}</svg></div>
+      <small>Ensenya-la a la caixa, a Esclat o vincula-la a la compra online. Les peces arriben soles.</small></div>`;
+}
+
+function show(name, id, anim){
+  current=name;
+  document.querySelectorAll('.scr').forEach(e=>e.classList.remove('on'));
+  if(name==='album'){ renderAlbum(); }
+  if(name==='detail'){ detailId=id; renderDetail(id, anim); }
+  if(name==='unlock'){ renderUnlock(id); setStep(4); }
+  if(name==='share'){ renderShare(id); setStep(5); }
+  if(name==='prizes'){ renderPrizes(); }
+  if(name==='card'){ renderCard(); }
+  const el = $('#s-'+(name==='card'?'prizes':name)); el.classList.add('on'); el.scrollTop=0;
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.tab===name || (name!=='prizes'&&name!=='card'&&b.dataset.tab==='album')));
+}
+
+/* ---------- Flow highlight ---------- */
+function setStep(n){
+  document.querySelectorAll('#flow li').forEach((li,i)=>{ li.classList.toggle('on', i===n-1); li.classList.toggle('done', i<n-1); });
+}
+
+/* ---------- Engine: assign pieces ---------- */
+function give(servei, n){
+  const got=[];
+  for(let k=0;k<n;k++){
+    const cand = CROMOS.filter(c=>c.servei===servei && !isDone(c.id));
+    if(!cand.length) break;
+    const max = Math.max(...cand.map(c=>count(c.id)));
+    const top = cand.filter(c=>count(c.id)===max);
+    const c = top[Math.floor(Math.random()*top.length)];
+    const missing = [0,1,2,3].filter(i=>!S.pieces[c.id][i]);
+    const i = missing[Math.floor(Math.random()*missing.length)];
+    S.pieces[c.id][i]=1; got.push({id:c.id,i});
+  }
+  return got;
+}
+
+function act(servei){
+  setStep(1);
+  const s=SERVEIS[servei], via = S.ident==='app'?"l'app":'la targeta';
+  let n=1, txt='', bonus=false;
+  if(servei==='super'){
+    const amt=+$('#amount').value, tot=S.saldo+amt;
+    n=Math.floor(tot/10); S.saldo=tot%10;
+    if(n===0 && S.first){ n=1; bonus=true; }
+    txt=`Compra de ${amt} € al súper`;
+  }
+  if(servei==='esclat') txt='Repostatge a Esclat';
+  if(servei==='energia'){ S.mesos++; txt=`Mes ${S.mesos} amb Bonpreu Energia`; }
+  if(servei==='online') txt='Comanda a la botiga online';
+  S.first=false;
+  const got = n? give(servei,n) : [];
+  S.log.unshift(`${s.ic} ${txt} (amb ${via}) → ${got.length?`+${got.length} peça${got.length>1?'es':''}`:'cap peça'}${bonus?' · regal de benvinguda':''}`);
+  S.log=S.log.slice(0,30); save(); renderSim();
+  setTimeout(()=>{ setStep(2); setTimeout(()=>notify(servei, got, n, bonus), 550); }, 450);
+}
+
+let nt;
+function notify(servei, got, n, bonus){
+  const s=SERVEIS[servei], N=$('#notif');
+  clearTimeout(nt);
+  newPieces={}; got.forEach(g=>(newPieces[g.id]=newPieces[g.id]||[]).push(g.i));
+  let body;
+  if(got.length){
+    const ids=[...new Set(got.map(g=>g.id))], c=byId[ids[0]], done=ids.filter(isDone);
+    body = `<div class="pcs">${got.slice(0,3).map(g=>`<img src="${img(g.id,g.i+1)}" alt="">`).join('')}</div>
+      <div><b>${done.length?'🏆 Cromo completat!':`+${got.length} peça${got.length>1?'es':''} nova${got.length>1?'es':''}!`}</b>
+      <small>${ids.map(id=>`${byId[id].nom} <b style="display:inline">${count(id)}/4</b>`).join(' · ')}${bonus?'<br>🎁 Peça de benvinguda per la primera compra':''}</small></div>`;
+    N.dataset.id = done[0]||ids[0]; N.dataset.done = done.length?'1':'';
+  } else if(n===0){
+    body = `<div class="pcs" style="font-size:30px">🛒</div><div><b>Gairebé!</b><small>Portes ${S.saldo} € acumulats. Als 10 € tens una peça nova.</small></div>`;
+    N.dataset.id='';
+  } else {
+    body = `<div class="pcs" style="font-size:30px">🏆</div><div><b>Ja tens tots els cromos de ${s.nom}!</b><small>Prova un altre servei per completar l'àlbum.</small></div>`;
+    N.dataset.id='';
+  }
+  N.innerHTML = `<div class="nh"><span class="ap">B</span>BONPREU · ara</div><div class="nb">${body}</div>${N.dataset.id?'<div class="tap">Toca per veure-ho ›</div>':''}`;
+  N.classList.add('show'); setStep(3);
+  if(current==='album') renderAlbum();
+  Object.keys(newPieces).forEach(id=>$('#card-'+id)?.classList.add('flash'));
+  nt=setTimeout(()=>N.classList.remove('show'), 7000);
+}
+
+$('#notif').addEventListener('click',()=>{
+  const N=$('#notif'), id=N.dataset.id; N.classList.remove('show');
+  if(!id) return;
+  if(N.dataset.done){ show('detail', id, true); setTimeout(()=>{ confetti(); show('unlock', id); }, 1300); }
+  else show('detail', id, true);
+});
+
+function confetti(){
+  const box=$('#confetti'), cols=['#ffd200','#13803d','#e85d1c','#2f6fd6','#fff'];
+  box.innerHTML = Array.from({length:70},()=>`<i style="left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*5)]};animation-duration:${1.6+Math.random()*1.6}s;animation-delay:${Math.random()*.5}s"></i>`).join('');
+  setTimeout(()=>box.innerHTML='',3800);
+}
+function toast(t){ const e=$('#toast'); e.textContent=t; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),2200); }
+
+/* ---------- Simulator UI ---------- */
+function renderSim(){
+  $('#amtv').textContent = $('#amount').value+' €';
+  const amt=+$('#amount').value, tot=S.saldo+amt, n=Math.floor(tot/10);
+  $('#saldo').innerHTML = `Saldo acumulat: <b>${S.saldo} €</b> → amb aquesta compra: <b>${n||(S.first?'1 (benvinguda)':0)} peça${n>1?'es':''}</b>`;
+  $('#log').innerHTML = S.log.length? S.log.map(l=>`<div>${l}</div>`).join('') : '<div>Encara no hi ha cap acció.</div>';
+  document.querySelectorAll('#idsel button').forEach(b=>b.classList.toggle('on', b.dataset.id===S.ident));
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click', e=>{
+  const a=e.target.closest('[data-act]'); if(a){ act(a.dataset.act); return; }
+  const o=e.target.closest('[data-open]'); if(o){ show('detail', o.dataset.open); return; }
+  const g=e.target.closest('[data-go]'); if(g){ if(g.dataset.go==='unlock') confetti(); show(g.dataset.go, g.dataset.id); return; }
+  const t=e.target.closest('[data-tab]'); if(t){ show(t.dataset.tab); return; }
+  const net=e.target.closest('[data-net]'); if(net){ toast(net.dataset.net==="l'enllaç"?'Enllaç copiat ✓':`Compartit a ${net.dataset.net} ✓ (simulació)`); return; }
+  const id=e.target.closest('#idsel button'); if(id){ S.ident=id.dataset.id; save(); renderSim(); }
+});
+$('#amount').addEventListener('input', renderSim);
+$('#reset').addEventListener('click', ()=>{ S=fresh(); save(); renderSim(); setStep(0); show('album'); $('#notif').classList.remove('show'); });
+$('#demoFill').addEventListener('click', ()=>{
+  // Deixa cada cromo a 2–3 peces perquè la demo arribi ràpid al cromo complet
+  CROMOS.forEach((c,k)=>{ S.pieces[c.id] = k%2? [1,1,1,0] : [1,0,1,0]; });
+  S.first=false; S.log.unshift('⚡ Àlbum preparat per a la demo'); save(); renderSim(); show('album');
+});
+
+setInterval(()=>{ const d=new Date(); $('#clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0'); }, 10000);
+renderSim(); show('album');
+</script>
+</body>
+</html>
